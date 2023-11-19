@@ -1,34 +1,46 @@
 import java.util.Random;
+import java.util.Arrays;
 
 class test {
+
 	public static void main(String[] args) {
 		
-		//エージェントの数
+		//エージェントの数 961
 		int agent = 961;
 
-		//ステップ数
-		int step = 10;
+		//ステップ数 300
+		int step = 300;
+
+		//曲数 20
+		int songs = 20;
 
 		//流行に乗っているか否か
-		boolean[][] followTheTrend = new boolean[step+1][agent+1];
+		boolean[][][] followTheTrend = new boolean[step+1][agent+1][songs+1];
 
 		//視野レベル
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
 		//内的傾向値
-		double[] f = new double[agent+1];
+		double[] interestToTrend = new double[agent+1];
 
 		//agentの各値を決定
 		for(int k=1; k<=agent; k++){
-			f[k] = 5;
+			interestToTrend[k] = 5;
+
+			//初期の視野レベルを（1~10）ランダムに設定
 			fieldOfViewLevel[0][k] = (int) (Math.random()*(3-1)) + 1;
 
-			//最初は10%の人が流行に乗っている
-			followTheTrend[0][k] = generateWithProbability(50);
+			for(int l=1; l<=songs; l++){
+				//最初は10%の人が流行に乗っている
+				followTheTrend[0][k][l] = generateWithProbability(10);
+			}
 		}
 
 		//視野拡大の頻度、拡大する確率が何パーセントか
 		int expantionFrequency = 15;
+
+		//視野拡大の時何段階拡大するか
+		int expantionStage = 3;
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
 		int reducationSpeed = 2;
@@ -41,12 +53,8 @@ class test {
 
 		for(int k=1; k<=step; k++){
 			for(int l=1; l<=agent; l++){
-
 				//視野の決定
-				fieldOfViewLevel[k][l] = fieldOfView(expantionFrequency, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
-				if(fieldOfViewLevel[k][l] < 1){
-					fieldOfViewLevel[k][l] = 0;
-				}
+				fieldOfViewLevel[k][l] = fieldOfView(expantionFrequency, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
 
 				//視野の連続をカウント
 				if(k==1){
@@ -56,58 +64,76 @@ class test {
 				}else{
 					sameViewStep[l] = 1;
 				}
-				//System.out.println(k+"ステップ目の"+l+"人目のエージェントの視野は"+fieldOfViewLevel[k][l]);
 
-				//1ステップ前のfollowTheTrendをコピーして渡す
-				boolean[] previousFollowTheTrend = new boolean[agent+1];
-				for(int i=1; i<=agent; i++){
-					previousFollowTheTrend[i] = followTheTrend[k-1][i];
+				for(int m=1; m<=songs; m++){
+
+					//1ステップ前の,m曲目のfollowTheTrendをコピーして渡す
+					boolean[] previousFollowTheTrend = new boolean[agent+1];
+					for(int i=1; i<=agent; i++){
+						previousFollowTheTrend[i] = followTheTrend[k-1][i][m];
+					}
+
+					//視野レベルに応じた、流行に乗っている人のカウント
+					int follower = countFollower(l, fieldOfViewLevel[k][l], previousFollowTheTrend);
+
+					//視野内にいるエージェントの総数
+					double agentInView = Math.pow(2*(double)fieldOfViewLevel[k][l]+1, 2);
+
+					//流行に乗るか判断 kステップ目、lさん、m曲目
+					if((interestToTrend[l]*follower) > (agentInView-follower)){
+						followTheTrend[k][l][m] = true;
+						//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より大きいので流行に乗る！");
+					}else{
+						followTheTrend[k][l][m] = false;
+						//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より小さいので乗らない！");
+					}
 				}
-
-				//視野レベルに応じた、流行に乗っている人のカウント
-				int follower = countFollower(l, fieldOfViewLevel[k][l], previousFollowTheTrend);
-
-				//視野内にいるエージェントの総数
-				double agentInView = Math.pow(2*(double)fieldOfViewLevel[k][l]+1, 2);
-				//System.out.println("視野内"+agentInView+"人");
-
-				//流行に乗るか判断
-				//System.out.println(k+"ステップ目、"+l+"さんの判断");
-				if((f[l]*follower) > (agentInView-follower)){
-					followTheTrend[k][l] = true;
-					//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より大きいので流行に乗る！");
-				}else{
-					followTheTrend[k][l] = false;
-					//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より小さいので乗らない！");
-				}
-
 			}
 
-			int countFollower = 0;
-			for(int m=1; m<=agent; m++){
-				if(followTheTrend[k][m]) countFollower++;
+			int[] countSongFollower = new int[songs+1];
+			for(int m=1; m<=songs; m++){
+				countSongFollower[m]=0;
+				for(int l=1; l<=agent; l++){
+					if(followTheTrend[k][l][m]){
+						countSongFollower[m]++;
+					}
+				}
 			}
-
-			System.out.println(k+"ステップ目の流行に乗っている人数は"+countFollower+"人");
+			int countAllFollower = Arrays.stream(countSongFollower).sum();
+			System.out.println("全体："+countAllFollower);
+            Arrays.sort(countSongFollower);
+			for(int m=songs; m>19; m--){
+				System.out.println(k+"ステップ目"+m+"位の曲は"+countSongFollower[m]);
+				if(countAllFollower!=0) System.out.println(((double)countSongFollower[m]/countAllFollower)*100);
+			}
 		}
 	}
 
 	//視野決定のための関数
-	static public int fieldOfView(int expantionFrequency, int reducationSpeed, int sameViewStep, int previousLevel){
+	static public int fieldOfView(int expantionFrequency, int expantionStage, int reducationSpeed, int sameViewStep, int previousLevel){
 
 		//視野の拡大が起きるか否か、確率expantionFrequency
 		Random random = new Random();
 		boolean expantion = generateWithProbability(expantionFrequency);
 
+
+		//視野レベル
+		int level;
+
 		if(expantion){
-			//System.out.println("かくだい！！！");
-			return 3;
+			level = previousLevel + expantionStage;
 		}else if(sameViewStep >= reducationSpeed){
-			//System.out.println("縮小！！");
-			return previousLevel-1;
+			level = previousLevel-1;
 		}else{
-			//System.out.println("変化なし！");
-			return previousLevel;
+			level = previousLevel;
+		}
+
+		if(level <= 0){
+			return 1;
+		}else if(level > 10){
+			return 10;
+		}else{
+			return level;
 		}
 	}
 
