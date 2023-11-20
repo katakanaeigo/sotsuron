@@ -23,16 +23,21 @@ class test {
 		//内的傾向値
 		double[] interestToTrend = new double[agent+1];
 
+		//ランダムseed
+		long seed = 8L;
+
 		//agentの各値を決定
 		for(int k=1; k<=agent; k++){
-			interestToTrend[k] = 5;
+			//流行への興味を平均1, 標準偏差0.35ランダムに生成
+			interestToTrend[k] = generateRandomGaussian(1, 0.35, seed+k);
 
 			//初期の視野レベルを（1~10）ランダムに設定
-			fieldOfViewLevel[0][k] = (int) (Math.random()*(3-1)) + 1;
+			fieldOfViewLevel[0][k] = generateRandomNumber(1, 10, seed+k);
 
 			for(int l=1; l<=songs; l++){
-				//最初は10%の人が流行に乗っている
-				followTheTrend[0][k][l] = generateWithProbability(10);
+				//最初は10~50%の人が流行に乗っている
+				int percent = generateRandomNumber(10, 50, seed+k+l);
+				followTheTrend[0][k][l] = generateWithProbability(percent, seed+10*k+l);
 			}
 		}
 
@@ -50,6 +55,9 @@ class test {
 		for(int k=1; k<=agent; k++){
 			sameViewStep[k] = 1;
 		}
+
+		//kステップ目、m曲目の流行に乗っている人数
+		int[][] countSongFollower = new int[step+1][songs+1];
 
 		for(int k=1; k<=step; k++){
 			for(int l=1; l<=agent; l++){
@@ -89,22 +97,35 @@ class test {
 					}
 				}
 			}
+		}
 
-			int[] countSongFollower = new int[songs+1];
+		//合計
+		for(int k=0; k<=step; k++){
 			for(int m=1; m<=songs; m++){
-				countSongFollower[m]=0;
 				for(int l=1; l<=agent; l++){
 					if(followTheTrend[k][l][m]){
-						countSongFollower[m]++;
+						countSongFollower[k][m]++;
 					}
 				}
 			}
-			int countAllFollower = Arrays.stream(countSongFollower).sum();
-			System.out.println("全体："+countAllFollower);
-            Arrays.sort(countSongFollower);
-			for(int m=songs; m>19; m--){
-				System.out.println(k+"ステップ目"+m+"位の曲は"+countSongFollower[m]);
-				if(countAllFollower!=0) System.out.println(((double)countSongFollower[m]/countAllFollower)*100);
+		}
+
+		//出力
+		int[] countAllFollower = new int[step+1];
+        for(int k=0; k<=step; k++){
+			for(int m=1; m<=songs; m++){
+                countAllFollower[k] = countAllFollower[k]+countSongFollower[k][m];
+			}
+		}
+
+	    for(int m=1; m<=songs; m++){
+			System.out.println(m+"曲目：");
+			for(int k=0; k<=step; k++){
+			    if(countAllFollower[k]!=0){
+					System.out.println(k+"ステップ目のシェア率は"+((double)countSongFollower[k][m]/countAllFollower[k])*100);
+			    }else{
+					System.out.println("全部の曲0なので無理");
+				}
 			}
 		}
 	}
@@ -113,8 +134,8 @@ class test {
 	static public int fieldOfView(int expantionFrequency, int expantionStage, int reducationSpeed, int sameViewStep, int previousLevel){
 
 		//視野の拡大が起きるか否か、確率expantionFrequency
-		Random random = new Random();
-		boolean expantion = generateWithProbability(expantionFrequency);
+		long seed = 8L;
+		boolean expantion = generateWithProbability(expantionFrequency, seed);
 
 
 		//視野レベル
@@ -212,11 +233,27 @@ class test {
 		return follower;
 	}
 
-	//一定の確率でtrueを返す、視野拡大と初期採用者の初期設定に使用
-	public static boolean generateWithProbability(int percent) {
-        Random random = new Random();
+
+    //ランダム系のメソッドまとめ
+	//確率percentでtrueを返す
+	public static boolean generateWithProbability(int percent, long seed) {
+        Random random = new Random(seed);
         int randomValue = random.nextInt(100); // 0から99までのランダムな整数を生成
 
         return randomValue < percent; // percentより小さい場合にtrueを返す
     }
+
+	//平均a, 標準偏差b の正規分布に従うランダムな値を生成
+	public static double generateRandomGaussian(double a, double b, long seed) {
+		Random random = new Random(seed);
+        double randomNumber = random.nextGaussian() * b + a;
+        return randomNumber;
+    }
+
+	//a以上b以下でランダムな値を生成する
+	public static int generateRandomNumber(int a, int b, long seed){
+		Random random = new Random(seed);
+        int randomNumber = random.nextInt(b-a+1) + a;
+		return randomNumber;
+	}
 }
