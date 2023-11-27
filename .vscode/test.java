@@ -28,31 +28,33 @@ class test {
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
 		//内的傾向値
-		//平均　2
-		double interestToTrendAve = 2;
-		//標準偏差 0.35
-		double interestToTrendSd = 0.5;
+		//平均
+		double interestToTrendAve = 1;
+		//標準偏差
+		double interestToTrendSd = 0.35;
 		double[][] interestToTrend = new double[agent+1][songs+1];
 
 		//最初から流行に乗っている人数
-		int innovatorTo = 50;
-		int innovatorFrom = 5;
+		int innovatorTo = 22;
+		int innovatorFrom = 22;
 
-		//ランダムseed
-		// long seed = System.currentTimeMillis();
+		// //overdose 最初はthisSongInnovatorNumberの人が乗っている　とする
+		int thisSongInnovatorNumber = 300;
+		// boolean[] thisSongInnovator = new boolean[agent+1];
+		// setRandomTrue(thisSongInnovator, thisSongInnovatorNumber);
+		// for(int k=1; k<=agent; k++){
+		// 	followTheTrend[0][k][1] = thisSongInnovator[k];
+		// }
 
 		//agentの各値を決定
 		for(int k=1; k<=agent; k++){
-			//一曲目はoverdoseとして値を特別に代入
-			interestToTrend[k][1] = generateRandomGaussian(interestToTrendAve, interestToTrendSd);
-			//最初は30%の人が乗っている　とする
-			followTheTrend[0][k][1] = generateWithProbability(30);
-
-            for(int l=2; l<=songs; l++){
+			//interestToTrend[k][1] = generateRandomGaussian(interestToTrendAve, interestToTrendSd);
+            for(int l=1; l<=songs; l++){
                 //流行への興味を曲それぞれに設定
-			    interestToTrend[k][l] = generateRandomGaussian(interestToTrendAve, interestToTrendSd);
+				Random random = new Random();
+			    interestToTrend[k][l] = 0.1 + (2.0 - 0.1) * random.nextDouble();
 
-				//最初は10~50%の人が流行に乗っている
+				//最初から流行に乗っているエージェント
 				int percent = generateRandomNumber(innovatorFrom, innovatorTo);
 				followTheTrend[0][k][l] = generateWithProbability(percent);
             }
@@ -62,10 +64,10 @@ class test {
 		}
 
 		//視野拡大の頻度、拡大する確率が何パーセントか
-		int expantionFrequency = 15;
+		int expantionFrequency = 10;
 
 		//視野拡大の時何段階拡大するか
-		int expantionStage = 3;
+		int expantionStage = 1;
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
 		int reducationSpeed = 2;
@@ -83,7 +85,7 @@ class test {
 			for(int l=1; l<=agent; l++){
 				//視野の決定
 				fieldOfViewLevel[k][l] = fieldOfView(expantionFrequency, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
-                //if(l==1) System.out.println(k+"ステップ目、"+l+"人目の視野は"+fieldOfViewLevel[k][l]);
+
 				//視野の連続をカウント
 				if(k==1){
 					sameViewStep[l] = 1;
@@ -107,16 +109,11 @@ class test {
 					int follower = agentCount.get("follower");
 					int notFollower = agentCount.get("notFollower");
 
-
-					//if(l==1) System.out.println("ステップ"+k+"、"+m+"曲:"+follower+"人");
-
 					//流行に乗るか判断 kステップ目、lさん、m曲目
 					if((interestToTrend[l][m]*follower) > notFollower){
 						followTheTrend[k][l][m] = true;
-						//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より大きいので流行に乗る！");
 					}else{
 						followTheTrend[k][l][m] = false;
-						//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より小さいので乗らない！");
 					}
 				}
 			}
@@ -149,7 +146,9 @@ class test {
 			writer.println("expantion_stage,"+expantionStage);
 			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
-			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+"%,~,"+innovatorTo+"%");
+			writer.println();
+			writer.println("曲1の最初から流行に乗っている人数,"+thisSongInnovatorNumber);
 			writer.println();
 			
             // ヘッダー行の書き込み
@@ -179,12 +178,13 @@ class test {
 			writer.println("expantion_stage,"+expantionStage);
 			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
-			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+"%,~,"+innovatorTo+"%");
+			writer.println();
+			writer.println("曲1の最初から流行に乗っている人数,"+thisSongInnovatorNumber);
 			writer.println();
 			
 			// ヘッダー行の書き込み
-            writer.print("step, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20");
-			writer.println(); //改行
+            writer.println("step, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20");
 
             for(int k=0; k<=step; k++){
                 writer.print(k+",");
@@ -245,12 +245,6 @@ class test {
 				//エージェント番号を把握
 				int m = (k-1)*grid+l;
 				gridAgent[k][l] = previousFollowTheTrend[m];
-				//System.out.println("縦座標："+k+"、横座標："+l+"に"+gridAgent[k][l]+"が存在（"+m+"番目のエージェント）");
-				if(m == agentNumber){
-					thisAgentHeght = k;
-					thisAgentwidth = l;
-					//System.out.println("自分は縦座標："+k+"、横座標："+l+"です。");
-				}
 			}
 		}
 
@@ -297,7 +291,6 @@ class test {
 				}
 			}
 		}
-		//System.out.println("合計数："+followerCount);
 
 		Map<String, Integer> agentCount = new HashMap<>();
 
@@ -331,4 +324,19 @@ class test {
         int randomNumber = random.nextInt(b-a+1) + a;
 		return randomNumber;
 	}
+
+	//指定した数trueを入れる
+	public static void setRandomTrue(boolean[] array, int numberOfTrue) {
+        Random random = new Random();
+
+        // numberOfTrue個のtrueをランダムに設定
+        int count = 0;
+        while (count < numberOfTrue) {
+            int index = random.nextInt(array.length);
+            if (!array[index]) {
+                array[index] = true;
+                count++;
+            }
+        }
+    }
 }

@@ -1,3 +1,5 @@
+//視野の拡大は指定した段階拡大されるver
+
 import java.util.Random;
 import java.util.Arrays;
 import java.io.FileWriter;
@@ -57,10 +59,10 @@ class siyaonaji {
 		}
 
 		//視野拡大の頻度、拡大する確率が何パーセントか
-		int expantionFrequency = 15;
+		int expantionFrequency = 5;
 
 		//視野拡大の時何段階拡大するか
-		int expantionStage = 3;
+		int expantionStage = 1;
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
 		int reducationSpeed = 2;
