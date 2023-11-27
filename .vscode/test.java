@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 class test {
 
@@ -13,8 +15,8 @@ class test {
 		//エージェントの数 961
 		int agent = 961;
 
-		//ステップ数 300
-		int step = 300;
+		//ステップ数 30
+		int step = 30;
 
 		//曲数 20
 		int songs = 20;
@@ -26,24 +28,37 @@ class test {
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
 		//内的傾向値
-		double[] interestToTrend = new double[agent+1];
+		//平均　2
+		double interestToTrendAve = 2;
+		//標準偏差 0.35
+		double interestToTrendSd = 0.5;
+		double[][] interestToTrend = new double[agent+1][songs+1];
+
+		//最初から流行に乗っている人数
+		int innovatorTo = 50;
+		int innovatorFrom = 5;
 
 		//ランダムseed
 		// long seed = System.currentTimeMillis();
 
 		//agentの各値を決定
 		for(int k=1; k<=agent; k++){
-			//流行への興味を平均1, 標準偏差0.35ランダムに生成
-			interestToTrend[k] = generateRandomGaussian(4, 0.35);
+			//一曲目はoverdoseとして値を特別に代入
+			interestToTrend[k][1] = generateRandomGaussian(interestToTrendAve, interestToTrendSd);
+			//最初は30%の人が乗っている　とする
+			followTheTrend[0][k][1] = generateWithProbability(30);
+
+            for(int l=2; l<=songs; l++){
+                //流行への興味を曲それぞれに設定
+			    interestToTrend[k][l] = generateRandomGaussian(interestToTrendAve, interestToTrendSd);
+
+				//最初は10~50%の人が流行に乗っている
+				int percent = generateRandomNumber(innovatorFrom, innovatorTo);
+				followTheTrend[0][k][l] = generateWithProbability(percent);
+            }
 
 			//初期の視野レベルを（1~10）ランダムに設定
 			fieldOfViewLevel[0][k] = generateRandomNumber(1, 10);
-
-			for(int l=1; l<=songs; l++){
-				//最初は10~50%の人が流行に乗っている
-				int percent = generateRandomNumber(10, 40);
-				followTheTrend[0][k][l] = generateWithProbability(percent);
-			}
 		}
 
 		//視野拡大の頻度、拡大する確率が何パーセントか
@@ -68,7 +83,7 @@ class test {
 			for(int l=1; l<=agent; l++){
 				//視野の決定
 				fieldOfViewLevel[k][l] = fieldOfView(expantionFrequency, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
-                if(l==10) System.out.println(k+"ステップ目、"+l+"人目の視野は"+fieldOfViewLevel[k][l]);
+                //if(l==1) System.out.println(k+"ステップ目、"+l+"人目の視野は"+fieldOfViewLevel[k][l]);
 				//視野の連続をカウント
 				if(k==1){
 					sameViewStep[l] = 1;
@@ -87,13 +102,16 @@ class test {
 					}
 
 					//視野レベルに応じた、流行に乗っている人のカウント
-					int follower = countFollower(l, fieldOfViewLevel[k][l], previousFollowTheTrend);
+					Map<String, Integer> agentCount = countFollower(l, fieldOfViewLevel[k][l], previousFollowTheTrend);
+					// 値の取得
+					int follower = agentCount.get("follower");
+					int notFollower = agentCount.get("notFollower");
 
-					//視野内にいるエージェントの総数
-					double agentInView = Math.pow(2*(double)fieldOfViewLevel[k][l]+1, 2);
+
+					//if(l==1) System.out.println("ステップ"+k+"、"+m+"曲:"+follower+"人");
 
 					//流行に乗るか判断 kステップ目、lさん、m曲目
-					if((interestToTrend[l]*follower) > (agentInView-follower)){
+					if((interestToTrend[l][m]*follower) > notFollower){
 						followTheTrend[k][l][m] = true;
 						//System.out.println(f[l]*follower+"は"+ (agentInView-follower)+"より大きいので流行に乗る！");
 					}else{
@@ -125,6 +143,15 @@ class test {
         String filePath = "output/output_" + currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "シェア率.csv";
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
+            //設定した値の記述
+			writer.println("reduction_speed,"+reducationSpeed);
+			writer.println("expantion_frequency,"+expantionFrequency);
+			writer.println("expantion_stage,"+expantionStage);
+			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
+			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
+			writer.println();
+			
             // ヘッダー行の書き込み
             writer.print("step, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20");
 			writer.println(); //改行
@@ -146,7 +173,16 @@ class test {
         String filePath2 = "output/output_" + currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "聴いてる人数.csv";
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath2))) {
-            // ヘッダー行の書き込み
+            //設定した値の記述
+			writer.println("reduction_speed,"+reducationSpeed);
+			writer.println("expantion_frequency,"+expantionFrequency);
+			writer.println("expantion_stage,"+expantionStage);
+			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
+			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
+			writer.println();
+			
+			// ヘッダー行の書き込み
             writer.print("step, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20");
 			writer.println(); //改行
 
@@ -192,7 +228,7 @@ class test {
 	}
 
     //視野内で流行に乗っているエージェントをカウントするための関数
-	public static int countFollower(int agentNumber, int fieldOfViewLevel, boolean[] previousFollowTheTrend){
+	public static Map<String, Integer> countFollower(int agentNumber, int fieldOfViewLevel, boolean[] previousFollowTheTrend){
 		
 		//何×何の格子にするか
 		int grid = 31;
@@ -207,7 +243,7 @@ class test {
 		for(int k=1; k<=grid; k++){
 			for(int l=1; l<=grid; l++){
 				//エージェント番号を把握
-				int m = (k-1)*3+l;
+				int m = (k-1)*grid+l;
 				gridAgent[k][l] = previousFollowTheTrend[m];
 				//System.out.println("縦座標："+k+"、横座標："+l+"に"+gridAgent[k][l]+"が存在（"+m+"番目のエージェント）");
 				if(m == agentNumber){
@@ -249,21 +285,27 @@ class test {
 			right = thisAgentwidth+fieldOfViewLevel;
 		}
 
-		// System.out.println("視野レベル："+fieldOfViewLevel);
-		// System.out.println("上："+top+"下："+bottom+"左："+left+"右："+right);
-
 		//視野内、かつ存在する座標内において、流行に乗っているエージェントをカウント
-		int follower = 0;
+		int followerCount = 0;
+		int notFollowerCount = 0;
 		for(int k=top; k<=bottom; k++){
 			for(int l=left; l<=right; l++){
 				if(gridAgent[k][l]){
-					follower ++;
+					followerCount ++;
+				}else{
+					notFollowerCount ++;
 				}
 			}
 		}
-		//System.out.println("合計数："+follower);
+		//System.out.println("合計数："+followerCount);
 
-		return follower;
+		Map<String, Integer> agentCount = new HashMap<>();
+
+        // Mapに値を追加
+        agentCount.put("follower", followerCount);
+        agentCount.put("notFollower", notFollowerCount);
+
+		return agentCount;
 	}
 
 
