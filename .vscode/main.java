@@ -72,8 +72,22 @@ class main {
 		int expantionFrequency = scan.nextInt();
 
 		//視野拡大の時何段階拡大するか
-        System.out.println("expantion_stage 視野の拡大が起こるとき何段階拡大するか int型");
-		int expantionStage = scan.nextInt();
+        System.out.println("視野の拡大の種類/nタイプ1:固定段階拡大する/nタイプ2:ランダムな段階拡大する/nタイプ3:常に同じ視野まで拡大する");
+        int expantionType = scan.nextInt();
+
+        int expantionStage = 0;
+
+        if(expantionType==1){
+            System.out.println("expantion_stage 視野の拡大が起こるとき何段階拡大するか int型");
+            expantionStage = scan.nextInt();
+        }else if(expantionType==3){
+            System.out.println("expantion_stage 視野が拡大する時レベル何まで拡大するか int型");
+            expantionStage = scan.nextInt();
+        }else if(expantionType==2){
+            expantionStage = 0;
+        }else{
+            System.out.println("1,2,3のいずれかを入力してください");
+        }
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
          System.out.println("reduction_speed 視野の縮小が起こる速さ  int型");
@@ -88,7 +102,7 @@ class main {
 		for(int k=1; k<=step; k++){
 			for(int l=1; l<=agent; l++){
 				//視野の決定
-				fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
+				fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionType, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
 				
                 //視野の連続をカウント
 				if(k==1){
