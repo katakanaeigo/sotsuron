@@ -191,18 +191,11 @@ class main {
             //設定した値の記述
 			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
-<<<<<<< HEAD
 			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo+",%");
             writer.println("注目する曲の最初から流行に乗る人数,"+thisSongInnovator+",%");
 			writer.println("reduction_speed,"+reducationSpeed+",step");
 			writer.println("expantion_frequency,"+expantionFrequency+",%");
 			writer.println("expantion_stage,"+expantionStage+",段階");
-=======
-			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
-			writer.println("reduction_speed,"+reducationSpeed);
-			writer.println("expantion_frequency,"+expantionFrequency);
-			writer.println("expantion_stage,"+expantionStage);
->>>>>>> b84307cde396f72c8decdf7776ef728449267852
 			writer.println();
 			
 			// ヘッダー行の書き込み
