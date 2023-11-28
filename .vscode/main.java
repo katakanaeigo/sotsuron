@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 class main {
 
@@ -26,19 +27,25 @@ class main {
 		//流行に乗っているか否か
 		boolean[][][] followTheTrend = new boolean[step+1][agent+1][songs+1];
 
-		//視野レベル
-		int[][] fieldOfViewLevel = new int[step+1][agent+1];
+        Scanner scan = new Scanner(System.in);
 
 		//内的傾向値
-		//平均　2
-		double interestToTrendAve = 2;
-		//標準偏差 0.35
-		double interestToTrendSd = 0.35;
+		//平均
+        System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 平均値 double型");
+		double interestToTrendAve = scan.nextDouble();
+		//標準偏差
+        System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 標準偏差 double型");
+		double interestToTrendSd = scan.nextDouble();
 		double[] interestToTrend = new double[agent+1];
 
 		//最初から流行に乗っている人数
-		int innovatorTo = 50;
-		int innovatorFrom = 5;
+        System.out.println("inovator（最初から曲を聴いている人数）の割合(%)　最低値  int型");
+		int innovatorFrom = scan.nextInt();
+        System.out.println("inovator（最初から曲を聴いている人数）の割合(%)　最高値  int型");
+		int innovatorTo = scan.nextInt();
+
+        //視野レベル
+		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
 		//agentの各値を決定
 		for(int k=1; k<=agent; k++){
@@ -60,13 +67,16 @@ class main {
 		}
 
 		//視野拡大の頻度、拡大する確率が何パーセントか
-		int expantionFrequency = 5;
+        System.out.println("expantion_frequency 視野の拡大が起こる頻度　確率(%)  int型");
+		int expantionFrequency = scan.nextInt();
 
 		//視野拡大の時何段階拡大するか
-		int expantionStage = 1;
+        System.out.println("expantion_stage 視野の拡大が起こるとき何段階拡大するか int型");
+		int expantionStage = scan.nextInt();
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
-		int reducationSpeed = 2;
+         System.out.println("reduction_speed 視野の縮小が起こる速さ  int型");
+		int reducationSpeed = scan.nextInt();
 		
 		//同じ視野が連続しているステップ数　初期値は１
 		int[] sameViewStep = new int[agent+1];
@@ -137,12 +147,12 @@ class main {
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             //設定した値の記述
+            writer.println("interest_to_trend 平均値,"+interestToTrendAve);
+			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
 			writer.println("reduction_speed,"+reducationSpeed);
 			writer.println("expantion_frequency,"+expantionFrequency);
 			writer.println("expantion_stage,"+expantionStage);
-			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
-			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
-			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
 			writer.println();
 			
             // ヘッダー行の書き込み
@@ -167,12 +177,12 @@ class main {
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath2))) {
             //設定した値の記述
-			writer.println("reduction_speed,"+reducationSpeed);
-			writer.println("expantion_frequency,"+expantionFrequency);
-			writer.println("expantion_stage,"+expantionStage);
 			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
 			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
+			writer.println("reduction_speed,"+reducationSpeed);
+			writer.println("expantion_frequency,"+expantionFrequency);
+			writer.println("expantion_stage,"+expantionStage);
 			writer.println();
 			
 			// ヘッダー行の書き込み
