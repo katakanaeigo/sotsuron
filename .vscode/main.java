@@ -1,5 +1,3 @@
-//視野の拡大は指定した段階拡大されるver
-
 import java.util.Random;
 import java.util.Arrays;
 import java.io.FileWriter;
@@ -44,6 +42,12 @@ class main {
         System.out.println("inovator（最初から曲を聴いている人数）の割合(%)　最高値  int型");
 		int innovatorTo = scan.nextInt();
 
+<<<<<<< HEAD
+        System.out.println("overdose の最初から聞いている人の割合(%) int型");
+        int thisSongInnovator = scan.nextInt();
+
+=======
+>>>>>>> b84307cde396f72c8decdf7776ef728449267852
         //視野レベル
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
@@ -56,7 +60,7 @@ class main {
 			fieldOfViewLevel[0][k] = random_tool.generateRandomNumber(1, 10);
 
 			//overdoseは、最初は28%の人が乗っている　とする
-			followTheTrend[0][k][1] = random_tool.generateWithProbability(28);
+			followTheTrend[0][k][1] = random_tool.generateWithProbability(thisSongInnovator);
 
 			for(int l=2; l<=songs; l++){
 				//最初は inovatorFrom~To %の人が流行に乗っている
@@ -149,10 +153,18 @@ class main {
             //設定した値の記述
             writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
+<<<<<<< HEAD
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo+",%");
+            writer.println("注目する曲の最初から流行に乗る人数,"+thisSongInnovator+",%");
+			writer.println("reduction_speed,"+reducationSpeed+",step");
+			writer.println("expantion_frequency,"+expantionFrequency+",%");
+			writer.println("expantion_stage,"+expantionStage+",段階");
+=======
 			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
 			writer.println("reduction_speed,"+reducationSpeed);
 			writer.println("expantion_frequency,"+expantionFrequency);
 			writer.println("expantion_stage,"+expantionStage);
+>>>>>>> b84307cde396f72c8decdf7776ef728449267852
 			writer.println();
 			
             // ヘッダー行の書き込み
@@ -179,10 +191,18 @@ class main {
             //設定した値の記述
 			writer.println("interest_to_trend 平均値,"+interestToTrendAve);
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
+<<<<<<< HEAD
+			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo+",%");
+            writer.println("注目する曲の最初から流行に乗る人数,"+thisSongInnovator+",%");
+			writer.println("reduction_speed,"+reducationSpeed+",step");
+			writer.println("expantion_frequency,"+expantionFrequency+",%");
+			writer.println("expantion_stage,"+expantionStage+",段階");
+=======
 			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo);
 			writer.println("reduction_speed,"+reducationSpeed);
 			writer.println("expantion_frequency,"+expantionFrequency);
 			writer.println("expantion_stage,"+expantionStage);
+>>>>>>> b84307cde396f72c8decdf7776ef728449267852
 			writer.println();
 			
 			// ヘッダー行の書き込み
