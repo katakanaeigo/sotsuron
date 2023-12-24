@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-class main {
+class main_copy {
 
 	public static void main(String[] args) {
 		
@@ -87,7 +87,11 @@ class main {
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
          System.out.println("reduction_speed 視野の縮小が起こる速さ  int型");
-		int reducationSpeed = scan.nextInt();
+		int[] reducationSpeed = new int[agent+1];
+
+		for(int k=1; k<=agent; k++){
+			reducationSpeed[k] = random_tool.generateRandomNumber(1, 2);
+		}
 
 		for(int x=1; x<=sikou; x++){
 
@@ -130,7 +134,7 @@ class main {
 			for(int k=1; k<=step; k++){
 				for(int l=1; l<=agent; l++){
 					//視野の決定
-					fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionType, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
+					fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionType, expantionStage, reducationSpeed[l], sameViewStep[l], fieldOfViewLevel[k-1][l]);
 					
 					//視野の連続をカウント
 					if(k==1){
@@ -192,7 +196,7 @@ class main {
 			writer.println("interest_to_trend 標準偏差,"+interestToTrendSd);
 			writer.println("最初から流行に乗る人数,"+innovatorFrom+",~,"+innovatorTo+",%");
             writer.println("注目する曲の最初から流行に乗る人数,"+thisSongInnovator+",人");
-			writer.println("reduction_speed,"+reducationSpeed+",step");
+			writer.println("reduction_speed, 1.5, step");
 			writer.println("expantion_frequency,"+expantionFrequency+",%");
 			writer.println("expantion_stage,"+expantionStage+",段階");
 			writer.println();

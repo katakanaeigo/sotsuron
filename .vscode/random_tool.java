@@ -23,4 +23,20 @@ public class random_tool{
         int randomNumber = random.nextInt(b-a+1) + a;
 		return randomNumber;
 	}
+
+	public static boolean[] shuffleArray(boolean[] array) {
+        Random random = new Random();
+        boolean[] shuffledArray = array.clone(); // オリジナルの配列を変更しないようにクローンを作成
+
+        for (int i = shuffledArray.length - 1; i > 0; i--) {
+            int index = random.nextInt(i + 1);
+
+            // 要素を入れ替え
+            boolean temp = shuffledArray[i];
+            shuffledArray[i] = shuffledArray[index];
+            shuffledArray[index] = temp;
+        }
+
+        return shuffledArray;
+    }
 }
