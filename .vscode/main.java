@@ -37,22 +37,15 @@ class main {
 
 		//内的傾向値
 		//平均
-        // System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 平均値 double型");
-		// double interestToTrendAve = scan.nextDouble();
 		double interestToTrendAve = 1.85;
 
 		//標準偏差
-        // System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 標準偏差 double型");
-		// double interestToTrendSd = scan.nextDouble();
 		double interestToTrendSd = 0.35;
 
 		double[] interestToTrend = new double[agent+1];
 
 		//最初から流行に乗っている人数
-        // System.out.println("inovator（最初から曲を聴いている人数）の割合(%)　最低値  int型");
-		// int innovatorFrom = scan.nextInt();
-        // System.out.println("inovator（最初から曲を聴いている人数）の割合(%)　最高値  int型");
-		// int innovatorTo = scan.nextInt();
+
 		int innovatorFrom = 10;
 		int innovatorTo = 50;
 

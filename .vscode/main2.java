@@ -12,6 +12,9 @@ import java.util.Scanner;
 class main2 {
 
 	public static void main(String[] args) {
+
+		// 出力ファイルのパス
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		
 		//エージェントの数 961
 		int agent = 961;
@@ -19,7 +22,7 @@ class main2 {
 		//ステップ数 30
 		int step = 30;
 
-		int sikou = 100;
+		int sikou = 10;
 
 		//流行に乗っているか否か
 		boolean[][] followTheTrend = new boolean[step+1][agent+1];
@@ -31,19 +34,14 @@ class main2 {
 
 		//内的傾向値
 		//平均
-        //System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 平均値 double型");
-		// double interestToTrendAve = scan.nextDouble();
-		double interestToTrendAve = 1.9;
+		double interestToTrendAve = 3;
 
 		//標準偏差
-        // System.out.println("interest_to_trend（流行にどれだけ乗りたいか） 標準偏差 double型");
-		// double interestToTrendSd = scan.nextDouble();
 		double interestToTrendSd = 0.35;
 		double[] interestToTrend = new double[agent+1];
 
-        // System.out.println("overdose の最初から聞いている人の人数269 int型");
-        // int thisSongInnovator = scan.nextInt();
-		int thisSongInnovator = 275;
+		//最初から曲を聴いている人数
+		int thisSongInnovator = 48;
 
         //視野レベル
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
@@ -53,29 +51,16 @@ class main2 {
 		int expantionFrequency = scan.nextInt();
 
 		//視野拡大の時何段階拡大するか
-        // System.out.println("視野の拡大の種類/nタイプ1:固定段階拡大する/nタイプ2:ランダムな段階拡大する/nタイプ3:常に同じ視野まで拡大する");
-        // int expantionType = scan.nextInt();
 		int expantionType = 1;
 
         int expantionStage = 3;
-
-        // if(expantionType==1){
-        //     System.out.println("expantion_stage 視野の拡大が起こるとき何段階拡大するか int型");
-        //     expantionStage = scan.nextInt();
-        // }else if(expantionType==3){
-        //     System.out.println("expantion_stage 視野が拡大する時レベル何まで拡大するか int型");
-        //     expantionStage = scan.nextInt();
-        // }else if(expantionType==2){
-        //     expantionStage = 0;
-        // }else{
-        //     System.out.println("1,2,3のいずれかを入力してください");
-        // }
 
 		//視野縮小の速さ　同じ視野が何ステップ連続するか
         System.out.println("reduction_speed 視野の縮小が起こる速さ  int型");
 		int reducationSpeed = scan.nextInt();
 
 		for(int x=1; x<=sikou; x++){
+			System.out.println(x+"試行目");
 
 			//agentの各値を決定
 			for(int k=1; k<=agent; k++){
@@ -83,7 +68,7 @@ class main2 {
 				interestToTrend[k] = random_tool.generateRandomGaussian(interestToTrendAve, interestToTrendSd);
 
 				//初期の視野レベルを（1~10）ランダムに設定
-				fieldOfViewLevel[0][k] = random_tool.generateRandomNumber(1, 10);
+				fieldOfViewLevel[0][k] = 1;
 			}
 
 			//最初から流行に乗っている初期値設定
@@ -148,11 +133,8 @@ class main2 {
 			}
 		}
 
-		// 出力ファイルのパス
-		 LocalDateTime currentDateTime = LocalDateTime.now();
-
 		// 年月日時分秒を含むファイル名
-        String filePath = "output/2/output_" + currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "聴いてる人数.csv";
+        String filePath = "output/3/output_" + currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "聴いてる人数.csv";
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             //設定した値の記述
@@ -174,7 +156,7 @@ class main2 {
 			}
 			writer.println(); //改行
 
-			for(int k=0; k<=step; k++){
+			for(int k=1; k<=step; k++){
 				writer.print(k+",");
 				for(int x=1; x<=sikou; x++){
 					writer.print((double)countSongFollower[x][k]/961+",");
