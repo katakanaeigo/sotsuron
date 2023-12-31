@@ -34,15 +34,18 @@ class main2 {
 
 		//内的傾向値
 		//平均
-		double interestToTrendAve = 3;
+		double interestToTrendAve = 2;
 
 		//標準偏差
 		double interestToTrendSd = 0.35;
 		double[] interestToTrend = new double[agent+1];
 
-		//最初から曲を聴いている人数
-		int thisSongInnovator = 48;
+		//最初から曲を聴いている（＝innovator）人数
+		int thisSongInnovator = 47;
 
+		//最初から曲を聴いている（=innnovator）にフラグを付ける
+		boolean[] innovatorFlag = new boolean[agent+1];
+		
         //視野レベル
 		int[][] fieldOfViewLevel = new int[step+1][agent+1];
 
@@ -80,6 +83,8 @@ class main2 {
 
 			for(int k=1; k<=agent; k++){
 				followTheTrend[0][k] = innovator[k-1];
+				if(followTheTrend[0][k]) innovatorFlag[k] = true;
+				else innovatorFlag[k] = false;
 			}
 
 			//同じ視野が連続しているステップ数　初期値は１
@@ -90,17 +95,18 @@ class main2 {
 
 			for(int k=1; k<=step; k++){
 				for(int l=1; l<=agent; l++){
-				//視野の決定
-				fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionType, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
-				
-				//視野の連続をカウント
-				if(k==1){
-					sameViewStep[l] = 1;
-				}else if(fieldOfViewLevel[k][l] == fieldOfViewLevel[k-1][l]){
-					sameViewStep[l] = sameViewStep[l]+1;
-				}else{
-					sameViewStep[l] = 1;
-				}
+
+					//視野の決定
+					fieldOfViewLevel[k][l] = field_of_view.fieldOfView(expantionFrequency, expantionType, expantionStage, reducationSpeed, sameViewStep[l], fieldOfViewLevel[k-1][l]);
+					
+					//視野の連続をカウント
+					if(k==1){
+						sameViewStep[l] = 1;
+					}else if(fieldOfViewLevel[k][l] == fieldOfViewLevel[k-1][l]){
+						sameViewStep[l] = sameViewStep[l]+1;
+					}else{
+						sameViewStep[l] = 1;
+					}
 
 					//1ステップ前の,m曲目のfollowTheTrendをコピーして渡す
 					boolean[] previousFollowTheTrend = new boolean[agent+1];
@@ -120,6 +126,9 @@ class main2 {
 					}else{
 						followTheTrend[k][l] = false;
 					}
+
+					//innovatorは曲を聴かない判断をしない
+					if(innovatorFlag[l]) followTheTrend[k][l] = true;
 				}
 			}
 
