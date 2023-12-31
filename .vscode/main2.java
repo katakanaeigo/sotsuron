@@ -131,6 +131,22 @@ class main2 {
 					}
 				}
 			}
+
+			// 年月日時分秒を含むファイル名
+        	String filePath2 = "output/4/output_" + currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_" + x + "試行目のcell出力.csv";
+			try (PrintWriter writer = new PrintWriter(new FileWriter(filePath2))) {
+				for(int k=0; k<=step; k++){
+					writer.println(k+"step");
+					for(int l=1; l<=agent; l++){
+						if(followTheTrend[k][l]) writer.print("●,");
+						else writer.print("〇,");
+						if(l%31==0) writer.println();
+					}
+					writer.println();
+				}
+			}catch (IOException e) {
+            System.err.println("CSVファイルの出力中にエラーが発生しました: " + e.getMessage());
+        	}
 		}
 
 		// 年月日時分秒を含むファイル名
