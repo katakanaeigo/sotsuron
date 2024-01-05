@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-class main_copy {
+class main_share_1.5 {
 
 	public static void main(String[] args) {
 		

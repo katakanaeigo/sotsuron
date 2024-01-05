@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-class main2 {
+class main_listener_ver1 {
 
 	public static void main(String[] args) {
 
@@ -22,7 +22,7 @@ class main2 {
 		//ステップ数 30
 		int step = 30;
 
-		int sikou = 10;
+		int sikou = 30;
 
 		//流行に乗っているか否か
 		boolean[][] followTheTrend = new boolean[step+1][agent+1];
@@ -34,7 +34,7 @@ class main2 {
 
 		//内的傾向値
 		//平均
-		double interestToTrendAve = 2;
+		double interestToTrendAve = 2.1;
 
 		//標準偏差
 		double interestToTrendSd = 0.35;
@@ -181,7 +181,7 @@ class main2 {
 			}
 			writer.println(); //改行
 
-			for(int k=1; k<=step; k++){
+			for(int k=0; k<=step; k++){
 				writer.print(k+",");
 				for(int x=1; x<=sikou; x++){
 					writer.print((double)countSongFollower[x][k]/961+",");
