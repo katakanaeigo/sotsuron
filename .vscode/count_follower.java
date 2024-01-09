@@ -72,7 +72,6 @@ public class count_follower{
 				}
 			}
 		}
-		//System.out.println("合計数："+followerCount);
 
 		Map<String, Integer> agentCount = new HashMap<>();
 

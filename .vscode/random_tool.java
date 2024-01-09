@@ -2,6 +2,7 @@ import java.util.Random;
 
 public class random_tool{
     //ランダム系のメソッドまとめ
+
 	//確率percentでtrueを返す
 	public static boolean generateWithProbability(int percent) {
         Random random = new Random();
@@ -24,6 +25,7 @@ public class random_tool{
 		return randomNumber;
 	}
 
+    //配列のシャッフル
 	public static boolean[] shuffleArray(boolean[] array) {
         Random random = new Random();
         boolean[] shuffledArray = array.clone(); // オリジナルの配列を変更しないようにクローンを作成
