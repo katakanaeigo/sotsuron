@@ -22,7 +22,7 @@ class main_listener_ver3 {
 		//ステップ数 30
 		int step = 30;
 
-		int sikou = 30;
+		int sikou = 100;
 
 		//流行に乗っているか否か
 		boolean[][] followTheTrend = new boolean[step+1][agent+1];
@@ -34,7 +34,7 @@ class main_listener_ver3 {
 
 		//内的傾向値
 		//平均
-		double interestToTrendAve = 2.05;
+		double interestToTrendAve = 3;
 
 		//標準偏差
 		double interestToTrendSd = 0.35;
@@ -63,15 +63,13 @@ class main_listener_ver3 {
 		int reducationSpeed = scan.nextInt();
 
 		for(int x=1; x<=sikou; x++){
-			System.out.println(x+"試行目");
-
 			//agentの各値を決定
 			for(int k=1; k<=agent; k++){
 				//流行への興味　正規分布
 				interestToTrend[k] = random_tool.generateRandomGaussian(interestToTrendAve, interestToTrendSd);
 
 				//初期の視野レベルを（1~10）ランダムに設定
-				fieldOfViewLevel[0][k] = 1;
+				fieldOfViewLevel[0][k] = random_tool.generateRandomNumber(1, 10);
 			}
 
 			//最初から流行に乗っている初期値設定

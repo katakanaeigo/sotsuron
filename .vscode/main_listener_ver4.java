@@ -22,7 +22,7 @@ class main_listener_ver4 {
 		//ステップ数 30
 		int step = 30;
 
-		int sikou = 30;
+		int sikou = 100;
 
 		//流行に乗っているか否か
 		boolean[][] followTheTrend = new boolean[step+1][agent+1];
@@ -89,7 +89,7 @@ class main_listener_ver4 {
 				}
 
 				//初期の視野レベルを（1~10）ランダムに設定
-				fieldOfViewLevel[0][k] = 1;
+				fieldOfViewLevel[0][k] = random_tool.generateRandomNumber(1, 10);
 			}
 
 			//同じ視野が連続しているステップ数　初期値は１
